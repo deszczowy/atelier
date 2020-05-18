@@ -1,6 +1,7 @@
 use tuner::*;
 
 use std::path::PathBuf;
+use std::path::Path;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
@@ -8,14 +9,18 @@ use notify::{Watcher, RecursiveMode, RawEvent, raw_watcher, Op};
 use uuid::Uuid;
 use std::sync::mpsc::channel;
 
+use std::time::Duration;
+use std::thread;
+
 pub struct Concierge {
     root: String,
 }
 
 // todo: close channel with wipe out
 
-trait Serve {
-    fn new(configuration_file: String) -> Concierge;
+pub trait Serve {
+    fn new() -> Concierge;
+    fn retrieve_message(&self, path: String) -> std::io::Result<String>;
     fn call(&self, channel_name: String) -> std::io::Result<PathBuf>;
     fn expect(&self, channel_name: String, action: &dyn Fn(String)) -> std::io::Result<()>;
     fn leave_message(&self, channel_name: String, message: String) -> std::io::Result<()>;
@@ -23,17 +28,25 @@ trait Serve {
 
 impl Serve for Concierge {
 
-    fn new(configuration_file: String) -> Concierge {
-        let cfg = Config::new(configuration_file).unwrap();
+    fn new() -> Concierge {
+        let cfg = Config::new("../config/concierge.config".to_string()).unwrap();
 
         Concierge {            
-            root: cfg["channels_root"].to_string(),
+            root: cfg["channels_root"].as_str().unwrap().to_string(),
         }
+    }
+
+    fn retrieve_message(&self, path: String) -> std::io::Result<String> {
+        println!("Path = {}", path);
+        let mut contents = fs::read_to_string(path)?;
+        println!("Contents = {:?}", contents);
+        Ok(contents)
     }
 
     fn call(&self, channel_name: String) -> std::io::Result<PathBuf> {
         let mut message_location = PathBuf::from(&self.root);
         message_location.push(&channel_name);
+        println!("{:?}", message_location);
 
         fs::create_dir_all(&message_location)?;
         Ok(message_location)
@@ -51,10 +64,10 @@ impl Serve for Concierge {
             Ok(RawEvent{path: Some(path), op: Ok(operation), cookie}) => {
 
                 if operation == Op::CREATE {
-                action(
-                    format!("{:?}", cookie)
-                );
+                    let m = self.retrieve_message(path.to_str().unwrap().to_string());
+                    action(m.unwrap());
                 }
+                
             },
             Ok(event) => println!("broken event: {:?}", event),
             Err(e) => println!("watch error: {:?}", e),

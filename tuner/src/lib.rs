@@ -12,8 +12,8 @@ pub trait Configurable {
 impl Configurable for Config {
     fn new(file_name: String) -> Result<Value> {
 
-        let config_file_name = format!("{}{}", var("HOME").unwrap(), file_name);
-        let config_file_path = Path::new(&config_file_name);
+        //let config_file_name = format!("{}{}", var("HOME").unwrap(), file_name);
+        let config_file_path = Path::new(&file_name);
 
         let json = File::open(config_file_path).expect("config file not found");
 
