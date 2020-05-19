@@ -1,0 +1,12 @@
+[package]
+name = "sudoku"
+version = "0.1.0"
+authors = ["deszczowy"]
+edition = "2018"
+description = "Sudoku board generator"
+
+[dependencies]
+rand="0.7"
+image="0.23.0"
+imageproc="0.20"
+rusttype = "0.8"
