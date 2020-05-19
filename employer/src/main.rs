@@ -53,10 +53,11 @@ fn run() {
 
     loop {
         schedule.tick();
-        std::thread::sleep(Duration::from_millis(500));
+        std::thread::sleep(Duration::from_millis(offers.interval));
     }
 }
 
 fn main() {
+    println!("Employer:: Start");
     run();
 }

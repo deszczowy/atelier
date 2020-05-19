@@ -1,5 +1,6 @@
 # Compiled files and executables
 tuner/target/
+employer/target/
 concierge/target/
 postmaster/target/
 sudoku/target/
