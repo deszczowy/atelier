@@ -4,6 +4,7 @@ employer/target/
 concierge/target/
 postmaster/target/
 sudoku/target/
+common/target/
 
 # Configurations
 config/*.config

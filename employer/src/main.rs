@@ -3,6 +3,7 @@ use job_scheduler::{JobScheduler, Job};
 use std::time::Duration;
 use std::fs;
 use concierge::*;
+use common::poke_message::*;
 
 #[derive(Serialize, Deserialize)]
 struct Task {
@@ -18,7 +19,14 @@ struct Offers {
 
 fn send_order(employee: String) {
     let concierge = Concierge::new();
-    concierge.leave_message(employee, "{}".to_string());
+    let msg = Poke::new("RUN".to_string()).serialized();
+    concierge.leave_message(employee, msg);
+}
+
+fn ask(employee: String) {
+    let concierge = Concierge::new();
+    let msg = Poke::new("STATUS".to_string()).serialized();
+    concierge.leave_message(employee, msg);
 }
 
 fn run() {
