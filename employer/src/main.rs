@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
 use job_scheduler::{JobScheduler, Job};
 use std::time::Duration;
 use std::fs;
+use concierge::*;
 
 #[derive(Serialize, Deserialize)]
 struct Task {
@@ -12,12 +12,13 @@ struct Task {
 
 #[derive(Serialize, Deserialize)]
 struct Offers {
-    interval: u32,
+    interval: u64,
     list: Vec<Task>
 }
 
 fn send_order(employee: String) {
-    println!("{}", employee);
+    let concierge = Concierge::new();
+    concierge.leave_message(employee, "{}".to_string());
 }
 
 fn run() {
@@ -27,12 +28,12 @@ fn run() {
 
     for job in offers.list {
 
-        if job.channel == "postman" { 
+        if job.channel == "postmaster" { 
             schedule.add(
                 Job::new(
                     job.execution_pattern.parse().unwrap(), || 
                         { 
-                            send_order("postman".to_string()); 
+                            send_order("postmaster".to_string()); 
                         } 
                 )
             );
