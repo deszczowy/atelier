@@ -63,7 +63,9 @@ impl Serve for Concierge {
             match rx.recv() {
             Ok(RawEvent{path: Some(path), op: Ok(operation), cookie}) => {
 
-                if operation == Op::CREATE {
+                //println!("operation {:?} on file {:?}, cookie {:?} ", path, operation, cookie);
+
+                if operation == Op::CLOSE_WRITE {
                     let m = self.retrieve_message(path.to_str().unwrap().to_string());
                     action(m.unwrap());
                 }
