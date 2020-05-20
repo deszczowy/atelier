@@ -6,6 +6,9 @@ postmaster/target/
 sudoku/target/
 common/target/
 
+# Development directory. If you need local develpment files, place them here
+dev/
+
 # Configurations
 config/*.config
 
