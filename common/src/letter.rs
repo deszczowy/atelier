@@ -1,4 +1,5 @@
 use serde::{Serialize, Deserialize};
+use crate::serialized::Serialized;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Letter {
@@ -23,6 +24,11 @@ impl BeLetter for Letter {
     }
 }
 
+impl Serialized for Letter {
+    fn serialized(&self) -> String {
+        serde_json::to_string(&self).unwrap().to_string()
+    }
+}
 /*
 ToDo: 
     - list of files to attach

@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::serialized::Serialized;
 
 #[derive(Serialize, Deserialize)]
 pub struct Poke {
@@ -7,7 +8,6 @@ pub struct Poke {
 
 pub trait Pokeing {
     fn new(new_action: String) -> Poke;
-    fn serialized(&self) -> String;
 }
 
 impl Pokeing for Poke {
@@ -16,7 +16,9 @@ impl Pokeing for Poke {
             action: new_action
         }
     }
+}
 
+impl Serialized for Poke {
     fn serialized(&self) -> String {
         serde_json::to_string(&self).unwrap().to_string()
     }
