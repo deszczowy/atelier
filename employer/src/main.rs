@@ -4,6 +4,7 @@ use std::time::Duration;
 use std::fs;
 use concierge::*;
 use common::poke_message::*;
+use common::serialized::Serialized;
 
 #[derive(Serialize, Deserialize)]
 struct Task {
