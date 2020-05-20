@@ -10,3 +10,6 @@ rand="0.7"
 image="0.23.0"
 imageproc="0.20"
 rusttype = "0.8"
+concierge = { path = "../concierge" }
+common = { path = "../common" }
+tuner = { path = "../tuner" }
