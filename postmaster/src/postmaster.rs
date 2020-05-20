@@ -6,8 +6,7 @@ use lettre::{SmtpClient, Transport};
 
 use std::path::Path;
 
-mod letter;
-use letter::{Letter, BeLetter};
+use common::letter::{Letter, BeLetter};
 
 pub struct Postmaster {
     letter: Letter,

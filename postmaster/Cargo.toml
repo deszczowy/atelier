@@ -15,3 +15,4 @@ serde_json = "1.0.52"
 # rand = { git = "https://github.com/rust-lang-nursery/rand" } # from online repo
 concierge = { path = "../concierge" }
 tuner = { path = "../tuner" }
+common = { path = "../common" }
