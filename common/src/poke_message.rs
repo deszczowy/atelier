@@ -3,7 +3,7 @@ use crate::serialized::Serialized;
 
 #[derive(Serialize, Deserialize)]
 pub struct Poke {
-    action : String
+    pub action : String
 }
 
 pub trait Pokeing {
