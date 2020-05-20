@@ -6,11 +6,13 @@ use std::collections::HashSet;
 use image::{Rgb, RgbImage};
 use imageproc::drawing::{draw_filled_rect_mut, draw_line_segment_mut, draw_text_mut};
 use imageproc::rect::Rect;
-//use std::path::Path;
 use rusttype::{FontCollection, Scale};
+
+use common::date::*;
 
 const WHITE : Rgb<u8> = Rgb([255u8, 255u8, 255u8]);
 const BLACK : Rgb<u8> = Rgb([0u8, 0u8, 0u8]);
+
 
 /*
 ************************************************* C E L L
@@ -504,6 +506,7 @@ pub struct Printer {
     sheet : RgbImage,
     sizex : f32,
     sizey : f32,
+    pub file_name : String
 }
 
 pub trait Printing {
@@ -533,11 +536,15 @@ impl Printing for Printer {
             sheet : RgbImage::new(880, 880),
             
             sizex : 880.0,
-            sizey : 880.0
+            sizey : 880.0,
+
+            file_name : "".to_string()
         }
     }
 
     fn print(&mut self, sudoku_board: &Board) {
+        self.file_name = format!("{}{}{}", "../pieces/", time_stamp(), ".png");
+
         self.clean_canvas();
         self.print_frame();
         self.print_grid();
@@ -636,6 +643,6 @@ impl Printing for Printer {
     }
 
     fn save(&self) {
-        self.sheet.save("../pieces/output.png").expect("Oh.. Can not save sudoku table printing...");
+        self.sheet.save(self.file_name.clone()).expect("Oh.. Can not save sudoku table printing...");
     }
 }

@@ -34,10 +34,11 @@ fn run() {
         subject: tag,
         message: "".to_string(),
         recipient: target,
-        attachment: "".to_string()
+        attachment: printer.file_name
     };
 
     let concierge = Concierge::new();
+    println!("{:?}", mail);
     concierge.leave_message("postmaster".to_string(), mail.serialized());
 }
 
