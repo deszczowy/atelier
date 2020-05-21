@@ -1,4 +1,6 @@
 # Compiled files and executables
+bin/
+logs/
 tuner/target/
 employer/target/
 concierge/target/
@@ -8,6 +10,7 @@ common/target/
 
 # Development directory. If you need local develpment files, place them here
 dev/
+
 
 # Configurations
 config/*.config
