@@ -1,3 +1,5 @@
+use std::env;
+
 mod sudoku;
 use sudoku::{Board, IsSudokuBoard, Printer, Printing};
 
@@ -6,9 +8,10 @@ use tuner::*;
 use common::letter::Letter;
 use common::serialized::Serialized;
 use common::poke_message::*;
+use common::arguments::*;
 
 
-fn run(message: String) {
+fn run(message: String, one_shot: bool) {
     println!("SUDOKU");
 
     let p : Poke = match serde_json::from_str(&message) {
@@ -38,22 +41,33 @@ fn run(message: String) {
         printer.print(&board);
         printer.save();
 
-        let mail = Letter{
-            subject: tag,
-            message: "".to_string(),
-            recipient: target,
-            attachment: printer.file_name
-        };
+        if !one_shot {
 
-        let concierge = Concierge::new();
-        println!("{:?}", mail);
-        concierge.leave_message("postmaster".to_string(), mail.serialized());
+            let mail = Letter{
+                subject: tag,
+                message: "".to_string(),
+                recipient: target,
+                attachment: printer.file_name
+            };
+
+            let concierge = Concierge::new();
+            println!("{:?}", mail);
+            concierge.leave_message("postmaster".to_string(), mail.serialized());
+        } else {
+            println!("One shot done!");
+        }
 
     }
 }
 
 fn main() {
 
-    let concierge = Concierge::new();
-    concierge.expect("sudoku".to_string(), &run);
+    if is_one_shot() {
+        println!("One shot run!");
+        let message = "{ \"action\":\"RUN\"}".to_string();
+        run(message, true);
+    } else {
+        let concierge = Concierge::new();
+        concierge.expect("sudoku".to_string(), &run);
+    }
 }

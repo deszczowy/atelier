@@ -521,6 +521,7 @@ pub trait Printing {
 
     // texts
     fn print_header(&mut self);
+    fn print_footer(&mut self);
 
     // numbers
     fn print_number(&mut self, row:u8, column:u8, number:u8);
@@ -551,6 +552,7 @@ impl Printing for Printer {
         self.print_boxes();
 
         self.print_header();
+        self.print_footer();
         self.print_numbers(&sudoku_board);
     }
 
@@ -628,6 +630,24 @@ impl Printing for Printer {
             y: 60.0,
         };
         draw_text_mut(&mut self.sheet, BLACK, cx, cy, scale, &font, &nr);
+    }
+
+    fn print_footer(&mut self) {
+        let font = Vec::from(include_bytes!("../../assets/fonts/monofonto.ttf") as &[u8]);
+        let font = FontCollection::from_bytes(font)
+            .unwrap()
+            .into_font()
+            .unwrap();
+
+        let cx = (880u32 - 140u32) / 2u32;
+        let cy = (880u32 - 50u32);
+        let footnote = format!("{} {}", perfect_date(), "@sudoku_break");
+
+        let scale = Scale {
+            x: 30.0,
+            y: 30.0,
+        };
+        draw_text_mut(&mut self.sheet, BLACK, cx, cy, scale, &font, &footnote);
     }
 
     fn print_numbers(&mut self, source:&Board) {

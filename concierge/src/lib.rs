@@ -22,7 +22,7 @@ pub trait Serve {
     fn new() -> Concierge;
     fn retrieve_message(&self, path: String) -> std::io::Result<String>;
     fn call(&self, channel_name: String) -> std::io::Result<PathBuf>;
-    fn expect(&self, channel_name: String, action: &dyn Fn(String)) -> std::io::Result<()>;
+    fn expect(&self, channel_name: String, action: &dyn Fn(String, bool)) -> std::io::Result<()>;
     fn leave_message(&self, channel_name: String, message: String) -> std::io::Result<()>;
 }
 
@@ -52,7 +52,7 @@ impl Serve for Concierge {
         Ok(message_location)
     }
 
-    fn expect(&self, channel_name: String, action: &dyn Fn(String)) -> std::io::Result<()> {
+    fn expect(&self, channel_name: String, action: &dyn Fn(String, bool)) -> std::io::Result<()> {
         let (tx, rx) = channel();
         let mut watcher = raw_watcher(tx).unwrap();
 
@@ -67,7 +67,7 @@ impl Serve for Concierge {
 
                 if operation == Op::CLOSE_WRITE {
                     let m = self.retrieve_message(path.to_str().unwrap().to_string());
-                    action(m.unwrap());
+                    action(m.unwrap(), false);
                 }
                 
             },
