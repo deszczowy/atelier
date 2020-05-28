@@ -621,7 +621,7 @@ impl Printing for Printer {
             .into_font()
             .unwrap();
 
-        let cx = (880u32 - 140u32) / 2u32;
+        let cx = (880u32 - 160u32) / 2u32;
         let cy = 10u32;
         let nr = "Sudoku!".to_string();
 
@@ -639,7 +639,7 @@ impl Printing for Printer {
             .into_font()
             .unwrap();
 
-        let cx = (880u32 - 140u32) / 2u32;
+        let cx = (880u32 - 300u32) / 2u32;
         let cy = (880u32 - 50u32);
         let footnote = format!("{} {}", perfect_date(), "@sudoku_break");
 
