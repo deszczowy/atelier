@@ -24,6 +24,8 @@ fn send_order(employee: String) {
     concierge.leave_message(employee, msg);
 }
 
+// this is for asking status. Not used right now, but will be.
+#[allow(dead_code)]
 fn ask(employee: String) {
     let concierge = Concierge::new();
     let msg = Poke::new("STATUS".to_string()).serialized();

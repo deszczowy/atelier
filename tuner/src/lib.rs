@@ -1,7 +1,6 @@
 use serde_json::{Result, Value};
 use std::fs::File;
 use std::path::Path;
-use std::env::var;
 
 pub struct Config {}
 

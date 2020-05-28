@@ -1,5 +1,3 @@
-use std::env;
-
 mod sudoku;
 use sudoku::{Board, IsSudokuBoard, Printer, Printing};
 

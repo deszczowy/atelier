@@ -1,16 +1,12 @@
 use tuner::*;
 
 use std::path::PathBuf;
-use std::path::Path;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use notify::{Watcher, RecursiveMode, RawEvent, raw_watcher, Op};
 use uuid::Uuid;
 use std::sync::mpsc::channel;
-
-use std::time::Duration;
-use std::thread;
 
 pub struct Concierge {
     root: String,
@@ -38,7 +34,7 @@ impl Serve for Concierge {
 
     fn retrieve_message(&self, path: String) -> std::io::Result<String> {
         println!("Path = {}", path);
-        let mut contents = fs::read_to_string(path)?;
+        let contents = fs::read_to_string(path)?;
         println!("Contents = {:?}", contents);
         Ok(contents)
     }
@@ -61,7 +57,7 @@ impl Serve for Concierge {
 
         loop {
             match rx.recv() {
-            Ok(RawEvent{path: Some(path), op: Ok(operation), cookie}) => {
+            Ok(RawEvent{path: Some(path), op: Ok(operation), cookie: _}) => {
 
                 //println!("operation {:?} on file {:?}, cookie {:?} ", path, operation, cookie);
 

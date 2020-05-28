@@ -3,7 +3,7 @@ use concierge::*;
 mod postmaster;
 use postmaster::{Postmaster, Mailing};
 
-fn run(message: String) {
+fn run(message: String, one_shot: bool) {
 
     println!("Postmaster RUN!");
     
