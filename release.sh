@@ -5,8 +5,8 @@ binaries=bin
 projects=(postmaster sudoku employer)
 
 echo "=== repository update"
-#git checkout -- .
-#git pull
+git checkout -- .
+git pull
 
 echo "=== preparation:"
 rm -rf "./$binaries/*"
@@ -21,7 +21,7 @@ for app in "${projects[@]}"; do
     rm -rf ./target/*
     
     echo "=== building $app:"
-    #cargo build --release >> "../logs/build.txt"
+    cargo build --release >> "../logs/build.txt"
     executable="./target/release/$app"
     
     echo "=== now $app executable is in $executable"
