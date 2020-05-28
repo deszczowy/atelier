@@ -1,16 +1,18 @@
 #!/bin/bash
 
-echo "bot_ecosystem:run"
+echo "=== bot_ecosystem:run"
 binaries=bin
 projects=(sudoku postmaster)
 
+echo "=== run:preparation:"
 cd "$binaries"
-rm ./*.txt
+rm ./*.list
 
 for app in "${projects[@]}"; do
-	echo "$app"
-    eval "./$app >> ../logs/$app.txt &"
-    echo "$!" >> pid.txt
+	echo "=== running $app"
+    eval "./$app >> ../logs/$app.log &"
+    echo "$!" >> pid.list
 done
 
 cd ..
+echo "=== run:done."

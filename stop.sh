@@ -1,12 +1,15 @@
 #!/bin/bash
 
-echo "bot_ecosystem:stop"
+echo "=== bot_ecosystem:stop"
 binaries=bin
 
-readarray -t pids < "$binaries/pid.txt"
+echo "=== stop:getting pids:"
+readarray -t pids < "$binaries/pid.list"
 
+echo "=== stopping:"
 for pid in "${pids[@]}"; do
-	echo "closing pid $pid"
-    eval "kill -9 $pid"
+	echo "=== closing pid $pid"
+    kill -9 "$pid"
 done
 
+echo "=== stop:done."
