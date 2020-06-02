@@ -639,14 +639,21 @@ impl Printing for Printer {
             .into_font()
             .unwrap();
 
-        let cx = (880u32 - 300u32) / 2u32;
-        let cy = (880u32 - 50u32);
-        let footnote = format!("{} {}", perfect_date(), "@sudoku_break");
+        let mut cx = (880u32 - 160u32) / 2u32;
+        let mut cy = (880u32 - 60u32);
+        let mut footnote = format!("{}", "@sudoku_break");
 
-        let scale = Scale {
+        let mut scale = Scale {
             x: 30.0,
             y: 30.0,
         };
+        draw_text_mut(&mut self.sheet, BLACK, cx, cy, scale, &font, &footnote);
+
+        footnote = format!("{}", perfect_date());
+        cx = (880u32 - 60u32) / 2u32;
+        cy = (880u32 - 30u32);
+        scale.x = 15.0;
+        scale.y = 15.0;
         draw_text_mut(&mut self.sheet, BLACK, cx, cy, scale, &font, &footnote);
     }
 
