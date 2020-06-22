@@ -506,7 +506,8 @@ pub struct Printer {
     sheet : RgbImage,
     sizex : f32,
     sizey : f32,
-    pub file_name : String
+    file_name : String,
+    file_path : String
 }
 
 pub trait Printing {
@@ -528,6 +529,7 @@ pub trait Printing {
     fn print_numbers(&mut self, source: &Board);
     
     // io
+    fn set_path(&mut self, new_path: String);
     fn save(&self);
 }
 
@@ -539,12 +541,13 @@ impl Printing for Printer {
             sizex : 880.0,
             sizey : 880.0,
 
-            file_name : "".to_string()
+            file_name : "".to_string(),
+            file_path : "".to_string()
         }
     }
 
     fn print(&mut self, sudoku_board: &Board) {
-        self.file_name = format!("{}{}{}", "../pieces/", time_stamp(), ".png");
+        self.file_name = format!("{}{}{}", self.file_path, time_stamp(), ".png");
 
         self.clean_canvas();
         self.print_frame();
@@ -667,6 +670,10 @@ impl Printing for Printer {
                 }
             }
         }
+    }
+
+    fn set_path(&mut self, new_path: String) {
+        self.file_path = new_path;
     }
 
     fn save(&self) {
