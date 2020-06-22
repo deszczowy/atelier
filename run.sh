@@ -2,7 +2,7 @@
 
 echo "=== bot_ecosystem:run"
 binaries=bin
-projects=(postmaster sudoku employer)
+projects=(sudoku employer)
 
 echo "=== run:preparation:"
 cd "$binaries"

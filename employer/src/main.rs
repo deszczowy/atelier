@@ -47,18 +47,6 @@ fn run() {
 
         write_log(format!("Schedule for {}", job.channel), LIB_NAME);
 
-        if job.channel == "postmaster" { 
-            schedule.add(
-                Job::new(
-                    job.execution_pattern.parse().unwrap(), || 
-                        { 
-                            send_order("postmaster".to_string()); 
-                        } 
-                )
-            );
-            write_log("Added".to_string(), LIB_NAME);
-        }
-            
         if job.channel == "sudoku" {
             schedule.add(
                 Job::new(

@@ -22,7 +22,6 @@ fn run(message: String, one_shot: bool) {
 
         let cfg = Config::new("../config/sudoku.config".to_string()).unwrap();
         let target = cfg["target"].as_str().unwrap().to_string();
-        let tag = cfg["tag"].as_str().unwrap().to_string();
 
         let mut board = Board::new();
 
@@ -37,25 +36,13 @@ fn run(message: String, one_shot: bool) {
         board.mask_board();
 
         let mut printer = Printer::new();
+        printer.set_path(target);
         printer.print(&board);
         printer.save();
 
-        if !one_shot {
-
-            let mail = Letter{
-                subject: tag,
-                message: "".to_string(),
-                recipient: target,
-                attachment: printer.file_name
-            };
-
-            let concierge = Concierge::new();
-            println!("{:?}", mail);
-            concierge.leave_message("postmaster".to_string(), mail.serialized());
-        } else {
+        if one_shot {
             println!("One shot done!");
         }
-
     }
 }
 
