@@ -3,6 +3,7 @@ use sudoku::{Board, IsSudokuBoard, Printer, Printing};
 
 use concierge::*;
 use tuner::*;
+use common::log::*;
 use common::letter::Letter;
 use common::serialized::Serialized;
 use common::poke_message::*;

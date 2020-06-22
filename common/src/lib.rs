@@ -3,3 +3,4 @@ pub mod poke_message;
 pub mod letter;
 pub mod date;
 pub mod arguments;
+pub mod log;

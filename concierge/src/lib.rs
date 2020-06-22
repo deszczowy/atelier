@@ -1,4 +1,5 @@
 use tuner::*;
+use common::log::*;
 
 use std::path::PathBuf;
 use std::fs;
@@ -11,6 +12,8 @@ use std::sync::mpsc::channel;
 pub struct Concierge {
     root: String,
 }
+
+const LIB_NAME : &str = "concierge";
 
 // todo: close channel with wipe out
 
@@ -26,6 +29,7 @@ impl Serve for Concierge {
 
     fn new() -> Concierge {
         let cfg = Config::new("../config/concierge.config".to_string()).unwrap();
+        write_log(format!("Concierge start at root {}", cfg["channels_root"]), LIB_NAME);
 
         Concierge {            
             root: cfg["channels_root"].as_str().unwrap().to_string(),
@@ -33,22 +37,24 @@ impl Serve for Concierge {
     }
 
     fn retrieve_message(&self, path: String) -> std::io::Result<String> {
-        println!("Path = {}", path);
+        write_log(format!("Retrieve message from {}", path), LIB_NAME);
         let contents = fs::read_to_string(path)?;
-        println!("Contents = {:?}", contents);
+        write_log(format!("Contents = {:?}", contents), LIB_NAME);
         Ok(contents)
     }
 
     fn call(&self, channel_name: String) -> std::io::Result<PathBuf> {
+        write_log(format!("Calling into channel {}", channel_name), LIB_NAME);
         let mut message_location = PathBuf::from(&self.root);
         message_location.push(&channel_name);
-        println!("{:?}", message_location);
+        write_log(format!("{:?}", message_location), LIB_NAME);
 
         fs::create_dir_all(&message_location)?;
         Ok(message_location)
     }
 
     fn expect(&self, channel_name: String, action: &dyn Fn(String, bool)) -> std::io::Result<()> {
+        write_log(format!("Listening on {}", channel_name), LIB_NAME);
         let (tx, rx) = channel();
         let mut watcher = raw_watcher(tx).unwrap();
 
@@ -59,16 +65,17 @@ impl Serve for Concierge {
             match rx.recv() {
             Ok(RawEvent{path: Some(path), op: Ok(operation), cookie: _}) => {
 
-                //println!("operation {:?} on file {:?}, cookie {:?} ", path, operation, cookie);
+                write_log(format!("Operation {:?} on file {:?}", path, operation), LIB_NAME);
 
                 if operation == Op::CLOSE_WRITE {
+                    write_log("Run action!".to_string(), LIB_NAME);
                     let m = self.retrieve_message(path.to_str().unwrap().to_string());
                     action(m.unwrap(), false);
                 }
                 
             },
-            Ok(event) => println!("broken event: {:?}", event),
-            Err(e) => println!("watch error: {:?}", e),
+            Ok(event) => write_log(format!("broken event: {:?}", event), LIB_NAME),
+            Err(e) => write_log(format!("watch error: {:?}", e), LIB_NAME),
             }
         }
     }
@@ -82,6 +89,8 @@ impl Serve for Concierge {
         
         let mut path = self.call(channel_name).unwrap();
         path.push(&message_id);
+
+        write_log(format!("Leaving message with id {} in {:?}", message_id, path), LIB_NAME);
 
         let mut message_instance = File::create(path.as_path())?;
         message_instance.write_all(message.as_bytes());
