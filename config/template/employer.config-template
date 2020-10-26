@@ -1,0 +1,13 @@
+{
+    "interval" : 500,
+    "list" : [
+        {
+            "execution_pattern" : "* * * * * *", 
+            "channel" : ""
+        }, 
+        {
+            "execution_pattern" : "* * * * * *", 
+            "channel":""
+        }
+    ]
+}
