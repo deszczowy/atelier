@@ -17,6 +17,8 @@ player/target/
 player/*.db
 sudoku/target/
 employer/target/
+artist/target/
+artist/*.png
 
 # Development directory. If you need local develpment files, place them here
 dev/

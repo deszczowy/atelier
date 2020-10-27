@@ -1,0 +1,15 @@
+[package]
+name = "artist"
+version = "0.1.0"
+authors = ["deszczowy"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+image="0.23.0"
+imageproc="0.20"
+
+circles = { path = "../art/circles" }
+stripes = { path = "../art/stripes" }
+painting = { path = "../library/painting" }
