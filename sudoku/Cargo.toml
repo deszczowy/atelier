@@ -15,4 +15,4 @@ serde_json = "1.0.52"
 
 concierge = { path = "../concierge" }
 common = { path = "../common" }
-tuner = { path = "../tuner" }
+tuner = { path = "../library/tuner" }
