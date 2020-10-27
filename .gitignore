@@ -8,6 +8,7 @@ library/http/target/
 library/crawler/target/
 library/painting/target/
 library/random/target/
+library/sql/target/
 sudoku/target/
 
 employer/target/
