@@ -10,6 +10,8 @@ library/painting/target/
 library/random/target/
 library/sql/target/
 
+art/circles/target/
+
 player/target/
 player/*.db
 sudoku/target/
