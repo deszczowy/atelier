@@ -11,6 +11,7 @@ library/random/target/
 library/sql/target/
 
 art/circles/target/
+art/stripes/target/
 
 player/target/
 player/*.db
