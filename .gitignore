@@ -1,12 +1,15 @@
 # Compiled files and executables
 bin/
 logs/
-tuner/target/
-employer/target/
-concierge/target/
-postmaster/target/
+library/tuner/target/
+library/common/target/
+library/concierge/target/
+library/http/target/
+library/crawler/target/
+library/painting/target/
 sudoku/target/
-common/target/
+
+employer/target/
 
 # Development directory. If you need local develpment files, place them here
 dev/
