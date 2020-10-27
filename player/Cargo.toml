@@ -1,0 +1,12 @@
+[package]
+name = "player"
+version = "0.1.0"
+authors = ["dezczowy"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+sql = { path = "../library/sql" }
+http = { path = "../library/http" }
+crawler = { path = "../library/crawler" }

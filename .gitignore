@@ -9,8 +9,10 @@ library/crawler/target/
 library/painting/target/
 library/random/target/
 library/sql/target/
-sudoku/target/
 
+player/target/
+player/*.db
+sudoku/target/
 employer/target/
 
 # Development directory. If you need local develpment files, place them here
