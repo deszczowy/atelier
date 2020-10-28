@@ -2,7 +2,7 @@
 
 echo "=== bot_ecosystem:build"
 binaries=bin
-projects=(sudoku employer)
+projects=(sudoku artist employer)
 
 echo "=== repository update"
 git checkout -- .
