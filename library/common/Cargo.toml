@@ -9,3 +9,4 @@ description = "Things widely used throught all projects"
 serde = { version = "1.0.101", features = ["derive"] }
 serde_json = "1.0.52"
 chrono = "0.4"
+uuid = { version = "0.4", features = ["serde", "v4"] }
