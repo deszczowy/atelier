@@ -1,4 +1,5 @@
 use random::*;
+use common::date::*;
 
 use image::{Rgb, RgbImage};
 use imageproc::drawing::{Point, draw_filled_rect_mut, draw_filled_circle_mut, draw_convex_polygon_mut};
@@ -12,7 +13,8 @@ pub struct Painting {
     pub randomizer: random::RandomGenerator,
     pub width: u32,
     pub height: u32,
-    pub descriptor: String
+    pub descriptor: String,
+    pub file_path: String,
 }
 
 pub struct ThePoint {
@@ -41,9 +43,9 @@ pub struct Trapezoid {
 
 pub trait Painter {
     fn new(w: u32, h: u32) -> Painting;
-    fn initialize(&mut self);
+    fn initialize(&mut self, localization: String);
     fn put_a_frame(&mut self, frame_width: i32, color: Rgb<u8>);
-    fn save_file(&self, file_name: String);
+    fn save_file(&self);
     fn fill_canvas(&mut self, r: u8, g:u8, b:u8);
 
     fn draw_circle(&mut self, circle: &Circle);
@@ -57,11 +59,14 @@ impl Painter for Painting {
             height: h,
             canvas: RgbImage::new(w, h),
             randomizer: random::RandomGenerator::new(),
-            descriptor: "".to_string()
+            descriptor: "".to_string(),
+            file_path: "".to_string()
         }
     }
 
-    fn initialize(&mut self) {
+    fn initialize(&mut self, localization: String) {
+        self.file_path = localization;
+
         draw_filled_rect_mut(
             &mut self.canvas, 
             Rect::at(0, 0).of_size(
@@ -118,7 +123,8 @@ impl Painter for Painting {
         );
     }
 
-    fn save_file(&self, file_name: String) {
+    fn save_file(&self) {
+        let file_name = format!("{}{}{}", self.file_path, time_stamp(), ".png");
         self.canvas.save(file_name.clone()).expect("Oh.. Can not save this printing...");
     }
 

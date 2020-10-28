@@ -10,3 +10,4 @@ edition = "2018"
 image="0.23.0"
 imageproc="0.20"
 random = { path = "../random" }
+common = { path = "../common" }

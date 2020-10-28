@@ -29,20 +29,20 @@ fn run(message: String, one_shot: bool) {
     if p.action == "CIRCLES" {
         use circles::*;
         let mut c = Painting::new(width, height);
-        c.initialize();
+        c.initialize(target);
         c.generate();
         c.put_a_frame(frame, painting::BLACK);
-        c.save_file("test.png".to_string());
+        c.save_file();
     } 
     else
 
     if p.action == "STRIPES" {
         use stripes::*;
         let mut c = Painting::new(width, height);
-        c.initialize();
+        c.initialize(target);
         c.generate();
         c.put_a_frame(frame, painting::BLACK);
-        c.save_file("test.png".to_string());
+        c.save_file();
     }
 
     if one_shot {
