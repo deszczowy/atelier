@@ -8,6 +8,7 @@ use common::log::*;
 use common::serialized::Serialized;
 
 const LIB_NAME : &str = "employer";
+const STANDARD_ORDER : &str = "RUN";
 
 #[derive(Serialize, Deserialize)]
 struct Task {
@@ -21,10 +22,10 @@ struct Offers {
     list: Vec<Task>
 }
 
-fn send_order(employee: String) {
+fn send_order(employee: String, order: String) {
     write_log(format!("Sending order to {}", employee), LIB_NAME);
     let concierge = Concierge::new();
-    let msg = Poke::new("RUN".to_string()).serialized();
+    let msg = Poke::new(order).serialized();
     concierge.leave_message(employee, msg);
 }
 
@@ -52,7 +53,7 @@ fn run() {
                 Job::new(
                     job.execution_pattern.parse().unwrap(), || 
                     { 
-                        send_order("sudoku".to_string()); 
+                        send_order("sudoku".to_string(), STANDARD_ORDER.to_string()); 
                     } 
                 )
             );
