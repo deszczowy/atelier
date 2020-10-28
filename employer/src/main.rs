@@ -57,8 +57,34 @@ fn run() {
                     } 
                 )
             );
-            write_log("Added".to_string(), LIB_NAME);
+            write_log("Sudoku added".to_string(), LIB_NAME);
         }
+
+        if job.channel == "artist_circles" {
+            schedule.add(
+                Job::new(
+                    job.execution_pattern.parse().unwrap(), ||
+                    {
+                        send_order("artist".to_string(), "CIRCLES".to_string());
+                    }
+                )
+            );
+            write_log("Circles from Artist added".to_string(), LIB_NAME);
+        }
+
+        if job.channel == "artist_stripes" {
+            schedule.add(
+                Job::new(
+                    job.execution_pattern.parse().unwrap(), ||
+                    {
+                        send_order("artist".to_string(), "STRIPES".to_string());
+                    }
+                )
+            );
+            write_log("Stripes from Artist added".to_string(), LIB_NAME);
+        }
+
+        //
     }
 
     write_log(format!("Running main loop with {}mills duration ", offers.interval), LIB_NAME);
