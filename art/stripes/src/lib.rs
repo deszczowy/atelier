@@ -42,10 +42,27 @@ impl Stripes for Painting {
 
         // colors initialization
         let color_part_top = self.randomizer.spit_range(40, 100) as i32;
+        let mut c_red = 0 as u8;
+        let mut c_green = 0 as u8;
+        let mut c_blue = 0 as u8;
 
-        let mut c_red = self.randomizer.spit(color_part_top) as u8;
-        let mut c_green = self.randomizer.spit(color_part_top) as u8;
-        let mut c_blue = self.randomizer.spit(color_part_top) as u8;
+        // direction of color progression. 
+        // up - from dark to light
+        // down - from light to dark
+        // in this selection color_part_top is top or bottom of the color scale
+        let direction_up = self.randomizer.spit(2) == 1;
+
+        if direction_up {
+            println!("Color progression - up");
+            c_red = self.randomizer.spit(color_part_top) as u8;
+            c_green = self.randomizer.spit(color_part_top) as u8;
+            c_blue = self.randomizer.spit(color_part_top) as u8;
+        } else {
+            println!("Color progression - down");
+            c_red = self.randomizer.spit_range(color_part_top, 255) as u8;
+            c_green = self.randomizer.spit_range(color_part_top, 255) as u8;
+            c_blue = self.randomizer.spit_range(color_part_top, 255) as u8;
+        }
 
         println!("Base color - RGB({}, {}, {})", c_red, c_green, c_blue);
 
@@ -79,9 +96,15 @@ impl Stripes for Painting {
                 shift_bottom = self.randomizer.spit(self.width as i32 - d_bottom);
             }
 
-            c_red += c_red_step;
-            c_green += c_green_step;
-            c_blue += c_blue_step;
+            if direction_up {
+                c_red += c_red_step;
+                c_green += c_green_step;
+                c_blue += c_blue_step;
+            } else {
+                c_red -= c_red_step;
+                c_green -= c_green_step;
+                c_blue -= c_blue_step;
+            }
 
             //println!("dt = {}, db = {}", d_top, d_bottom);
             //println!("st = {}, sb = {}", shift_top, shift_bottom);
