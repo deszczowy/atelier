@@ -1,6 +1,10 @@
 use random::*;
 use painting::*;
 
+pub struct OrnamentData {
+    pub horizontal_margin_height: u32,
+}
+
 pub trait Ornament {
     fn generate(&mut self);
 }
@@ -8,11 +12,14 @@ pub trait Ornament {
 impl Ornament for Painting {
     fn generate(&mut self) {
 
+        let mut ornament = OrnamentData {
+            horizontal_margin_height: 40u32 
+        };
+
         // canvas preparation
         let vmargin = 40f32;
-        let hmargin = 40f32;    
         let xaxis = (self.width as f32 - (2f32 * vmargin)) as i32;
-        let yaxis = (self.height as f32 - (2f32 * hmargin)) as i32;    
+        let yaxis = (self.height - (2u32 * ornament.horizontal_margin_height)) as i32;    
         let yplus = yaxis / 2;
 
         // bc print
@@ -25,7 +32,7 @@ impl Ornament for Painting {
         };
 
         let bcx = self.randomizer.spit_range(vmargin as i32, (self.width - vmargin as u32) as i32);
-        let bcy = self.randomizer.spit_range(hmargin as i32, (self.height - hmargin as u32) as i32);
+        let bcy = self.randomizer.spit_range(ornament.horizontal_margin_height as i32, (self.height - ornament.horizontal_margin_height) as i32);
 
         let mut triangle = Triangle{
             p0: ThePoint {x: 0, y: 0 },
@@ -78,7 +85,7 @@ impl Ornament for Painting {
         let thickness = 8u32;
         
 
-        println!("w{} h{}  vm{} hm{}  x{} y{} +y{}", self.width, self.height, vmargin, hmargin, xaxis, yaxis, yplus);
+        println!("w{} h{}  vm{} hm{}  x{} y{} +y{}", self.width, self.height, vmargin, ornament.horizontal_margin_height, xaxis, yaxis, yplus);
         
         // random points
         let mut random_points_counter = 0u8;
@@ -143,13 +150,13 @@ impl Ornament for Painting {
                 sum += p.y * coef;
             }
 
-            let mut proposed_y = ((sum * y_mult) + yplus as f32 + hmargin) as i32;
+            let mut proposed_y = ((sum * y_mult) + yplus as f32 + ornament.horizontal_margin_height as f32) as i32;
 
-            if proposed_y < hmargin as i32 {
-                proposed_y = hmargin as i32;
+            if proposed_y < ornament.horizontal_margin_height as i32 {
+                proposed_y = ornament.horizontal_margin_height as i32;
             } else
-            if proposed_y > (hmargin as i32 + yaxis) {
-                proposed_y = hmargin as i32 + yaxis;
+            if proposed_y > (ornament.horizontal_margin_height as i32 + yaxis) {
+                proposed_y = ornament.horizontal_margin_height as i32 + yaxis;
             }
             
             function.push(
@@ -227,9 +234,9 @@ impl Ornament for Painting {
         let mut i = start_index;
         while i < end_index {
             let x0 = &function[i].x;
-            let y0 = (2 * (yplus + hmargin as i32)) as i32 - &function[i].y.clone();
+            let y0 = (2 * (yplus + ornament.horizontal_margin_height as i32)) as i32 - &function[i].y.clone();
             let x1 = &function[i+1].x;
-            let y1 = (2 * (yplus + hmargin as i32)) as i32 - &function[i+1].y.clone();
+            let y1 = (2 * (yplus + ornament.horizontal_margin_height as i32)) as i32 - &function[i+1].y.clone();
 
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};
@@ -253,9 +260,9 @@ impl Ornament for Painting {
         while i < end_index && j > 0 {
 
             let x0 = &function[i].x;
-            let y0 = (2 * (yplus + hmargin as i32)) as i32 - &function[j].y.clone();
+            let y0 = (2 * (yplus + ornament.horizontal_margin_height as i32)) as i32 - &function[j].y.clone();
             let x1 = &function[i+1].x;
-            let y1 = (2 * (yplus + hmargin as i32)) as i32 - &function[j-1].y.clone();
+            let y1 = (2 * (yplus + ornament.horizontal_margin_height as i32)) as i32 - &function[j-1].y.clone();
 
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};
