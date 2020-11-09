@@ -7,7 +7,8 @@ pub struct OrnamentData {
     pub vertical_margin_width: u32,
     pub axis_x_range: u32,
     pub axis_y_range: u32,
-    pub axis_y_positive_part: u32
+    pub axis_y_positive_part: u32,
+    pub line_thickness: u32
 }
 
 pub trait OrnametCalculation {
@@ -23,12 +24,12 @@ impl OrnametCalculation for OrnamentData {
 }
 
 //-- Ornament printing
-
 pub trait Ornament {
     fn raise_color_by_step(&self, color: &mut TheColor, step: u8);
     fn fall_color_by_step(&self, color: &mut TheColor, step: u8);
     fn print_background(&mut self, ornament: &OrnamentData);
     fn print_background_triangles(&mut self, list: &mut Vec<i32>, triangle: &mut Triangle, color: &mut TheColor);
+    fn generate_random_nodes(&mut self, points: &mut Vec<ThePointF>);
     fn generate(&mut self);
 }
 
@@ -91,7 +92,22 @@ impl Ornament for Painting {
         self.print_background_triangles(&mut bv, &mut triangle, &mut color);
     }
 
+    fn generate_random_nodes(&mut self, points: &mut Vec<ThePointF>) {
+        points.push(ThePointF{x:0.0, y:0.0}); // first node at zero
+        for i in 1..9 {
+            points.push(
+                ThePointF{ 
+                    x: i as f32, 
+                    y: self.randomizer.spit_range_f(-1.0, 1.0) as f32
+                }
+            );
+        }
+        points.push(ThePointF{x: 9.0, y:0.0}); // last node also at zero
+    }
+
     fn generate(&mut self) {
+
+        let mut nodes = Vec::new();
 
         let mut ornament = OrnamentData {
             horizontal_margin_height: 40u32,
@@ -99,7 +115,7 @@ impl Ornament for Painting {
             axis_x_range: 0u32,
             axis_y_range: 0u32,
             axis_y_positive_part: 0u32,
-            //color: TheColor{ r:0, g:0, b:0 }
+            line_thickness: 8u32
         };
 
         ornament.caclulate_axes(self.width, self.height);
@@ -116,47 +132,12 @@ impl Ornament for Painting {
         let step = 20u8;
         let step_high = 1u8;
 
-        //self.fill_canvas(color.r, color.g, color.b);
-        //self.fill_canvas(255-color.r, 255-color.g, 255-color.b);
-
-        let thickness = 8u32;
-        
-
         println!("w{} h{}  vm{} hm{}  x{} y{} +y{}", self.width, self.height, ornament.vertical_margin_width, ornament.horizontal_margin_height, ornament.axis_x_range, ornament.axis_y_range, ornament.axis_y_positive_part);
         
         // random points
-        let mut random_points_counter = 0u8;
-        let mut random_range_bottom = 0u32;
-        let mut random_range_step = (ornament.axis_x_range / 8u32) as u32; 
-        let mut random_range_top = random_range_step;
-        let mut random_points = Vec::new();
-
-         random_points.push(
-             ThePointF{ 
-                 x: 0 as f32, 
-                 y: 0 as f32
-             }
-         );
-
-        for i in 1..9 {
-
-            random_points.push(
-                ThePointF{ 
-                    x: i as f32, 
-                    y: self.randomizer.spit_range_f(-1.0, 1.0) as f32
-                }
-            );
-
-        }
-
-         random_points.push(
-             ThePointF{ 
-                 x: 9 as f32, 
-                 y: 0 as f32
-             }
-         );
-
-        for rp in &random_points {
+        self.generate_random_nodes(&mut nodes);
+        
+        for rp in &nodes {
             println!("{:?}", rp);
         }
 
@@ -173,12 +154,12 @@ impl Ornament for Painting {
         
             sum = 0f32;
             
-            for p in &random_points {
+            for p in &nodes {
                 //println!("{:?}", p);
                 
                 let mut coef = 1f32;
                 
-                for pj in &random_points {
+                for pj in &nodes {
                     if pj.x != p.x {
                         coef *= (x - pj.x) / (p.x - pj.x);
                     }
@@ -227,7 +208,7 @@ impl Ornament for Painting {
         let mut v0 = &function[start_index];
         let mut v1 = &function[start_index +1];
         for i in start_index +2..end_index +1 {
-            self.draw_line(&v0, &v1, &color, thickness);
+            self.draw_line(&v0, &v1, &color, ornament.line_thickness);
             v0 = v1;
             v1 = &function[i];
         }
@@ -255,7 +236,7 @@ impl Ornament for Painting {
 
             //println!("f[{:?}] v0{:?} f[{:?}] v1{:?}", i, v0, j, v1);
 
-            self.draw_line(&v0, &v1, &color, thickness);
+            self.draw_line(&v0, &v1, &color, ornament.line_thickness);
 
             i += 1;
             j -= 1;        
@@ -278,7 +259,7 @@ impl Ornament for Painting {
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};
 
-            self.draw_line(&v0, &v1, &color, thickness);
+            self.draw_line(&v0, &v1, &color, ornament.line_thickness);
 
             i += 1;
         }
@@ -306,7 +287,7 @@ impl Ornament for Painting {
 
             //println!("f[{:?}] v0{:?} f[{:?}] v1{:?}", i, v0, j, v1);
 
-            self.draw_line(&v0, &v1, &color, thickness);
+            self.draw_line(&v0, &v1, &color, ornament.line_thickness);
 
             i += 1;
             j -= 1;        
