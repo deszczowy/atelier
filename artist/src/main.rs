@@ -44,6 +44,16 @@ fn run(message: String, one_shot: bool) {
         c.put_a_frame(frame, painting::BLACK);
         c.save_file();
     }
+    else
+
+    if p.action == "ORNAMENT" {
+        use ornament::*;
+        let mut c = Painting::new(width, height);
+        c.initialize(target);
+        c.generate();
+        c.put_a_frame(frame, painting::BLACK);
+        c.save_test();
+    }
 
     if one_shot {
         println!("One shot done!");
@@ -54,7 +64,7 @@ fn run(message: String, one_shot: bool) {
 fn main() {
     if is_one_shot() {
         println!("One shot run!");
-        let message = "{ \"action\":\"STRIPES\"}".to_string();
+        let message = "{ \"action\":\"ORNAMENT\"}".to_string();
         run(message, true);
     } else {
         let concierge = Concierge::new();

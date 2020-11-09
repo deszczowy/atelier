@@ -18,4 +18,5 @@ tuner = { path = "../library/tuner" }
 concierge = { path = "../library/concierge" }
 circles = { path = "../art/circles" }
 stripes = { path = "../art/stripes" }
+ornament = { path = "../art/ornament" }
 painting = { path = "../library/painting" }
