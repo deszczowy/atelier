@@ -28,6 +28,7 @@ pub trait Ornament {
     fn raise_color_by_step(&self, color: &mut TheColor, step: u8);
     fn fall_color_by_step(&self, color: &mut TheColor, step: u8);
     fn print_background(&mut self, ornament: &OrnamentData);
+    fn print_background_triangles(&mut self, list: &mut Vec<i32>, triangle: &mut Triangle, color: &mut TheColor);
     fn generate(&mut self);
 }
 
@@ -43,10 +44,21 @@ impl Ornament for Painting {
         color.b -= step;
     }
 
-    fn print_background(&mut self, ornament: &OrnamentData) {
-
-        // bc print
+    fn print_background_triangles(&mut self, list: &mut Vec<i32>, triangle: &mut Triangle, color: &mut TheColor) {
         let bc_step = 3u8;
+
+        while list.len() > 0 && list.len() % 4 == 0 {
+            triangle.p0.x = list.remove(0);
+            triangle.p0.y = list.remove(0);
+            triangle.p1.x = list.remove(0);
+            triangle.p1.y = list.remove(0);
+
+            self.fall_color_by_step(color, bc_step);
+            self.draw_triangle(&triangle, &color);
+        }
+    }
+
+    fn print_background(&mut self, ornament: &OrnamentData) {
 
         let mut color = TheColor{
             r : self.randomizer.spit_range(200, 250) as u8,
@@ -65,31 +77,18 @@ impl Ornament for Painting {
 
         let mut triangle = Triangle{
             p0: ThePoint {x: 0, y: 0 },
-            p1: ThePoint {x: self.width as i32, y: 0},
+            p1: ThePoint {x: 0, y: 0},
             p2: ThePoint {x: bcx, y: bcy},
         };
-        self.draw_triangle(&triangle, &color);
 
-        triangle.p0.x = self.width as i32;
-        triangle.p0.y = 0;
-        triangle.p1.x = self.width as i32;
-        triangle.p1.y = self.height as i32;
-        self.fall_color_by_step(&mut color, bc_step);
-        self.draw_triangle(&triangle, &color);
+        let mut bv = Vec::new();
 
-        triangle.p0.x = self.width as i32;
-        triangle.p0.y = self.height as i32;
-        triangle.p1.x = 0;
-        triangle.p1.y = self.height as i32;
-        self.fall_color_by_step(&mut color, bc_step);
-        self.draw_triangle(&triangle, &color);
-
-        triangle.p0.x = 0;
-        triangle.p0.y = self.height as i32;
-        triangle.p1.x = 0;
-        triangle.p1.y = 0;
-        self.fall_color_by_step(&mut color, bc_step);
-        self.draw_triangle(&triangle, &color);
+        bv.extend([0i32, 0i32, self.width as i32, 0i32].iter().copied());
+        bv.extend([self.width as i32, 0i32, self.width as i32, self.height as i32].iter().copied());
+        bv.extend([self.width as i32, self.height as i32, 0i32, self.height as i32].iter().copied());
+        bv.extend([0i32, self.height as i32, 0i32, 0i32].iter().copied());
+        
+        self.print_background_triangles(&mut bv, &mut triangle, &mut color);
     }
 
     fn generate(&mut self) {
