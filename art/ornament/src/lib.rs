@@ -30,6 +30,7 @@ pub trait Ornament {
     fn print_background(&mut self, ornament: &OrnamentData);
     fn print_background_triangles(&mut self, list: &mut Vec<i32>, triangle: &mut Triangle, color: &mut TheColor);
     fn generate_random_nodes(&mut self, points: &mut Vec<ThePointF>);
+    fn calculate_polynomial(&mut self, points: &Vec<ThePointF>, plot: &mut Vec<ThePoint>, ornament: &OrnamentData);
     fn generate(&mut self);
 }
 
@@ -105,9 +106,57 @@ impl Ornament for Painting {
         points.push(ThePointF{x: 9.0, y:0.0}); // last node also at zero
     }
 
+    fn calculate_polynomial(&mut self, points: &Vec<ThePointF>, plot: &mut Vec<ThePoint>, ornament: &OrnamentData){
+
+        let mut x = 0f32;
+        let mut sum : f32;
+
+        let x_multiplier = (ornament.axis_x_range / 9u32) as f32;
+        let y_multiplier = (ornament.axis_y_range / 5u32) as f32;
+
+        while x < 9 as f32 {
+
+            sum = 0.0;
+            
+            for n in points {                
+                let mut coef : f32 = 1.0;
+                
+                for pj in points {
+                    if pj.x != n.x {
+                        coef *= (x - pj.x) / (n.x - pj.x);
+                    }
+                }
+                
+                sum += n.y * coef;
+            }
+
+            let mut proposed_y = (
+                (sum * y_multiplier) + 
+                (ornament.axis_y_positive_part + ornament.horizontal_margin_height) as f32
+            ) as u32;
+
+            if proposed_y < ornament.horizontal_margin_height {
+                proposed_y = ornament.horizontal_margin_height;
+            } else
+            if proposed_y > (ornament.horizontal_margin_height + ornament.axis_y_range) {
+                proposed_y = (ornament.horizontal_margin_height + ornament.axis_y_range);
+            }
+            
+            plot.push(
+                ThePoint{
+                    x: ((x * x_multiplier) + ornament.vertical_margin_width as f32) as i32, 
+                    y: proposed_y as i32
+                }
+            );
+            
+            x += 0.1f32;
+        }
+    }
+
     fn generate(&mut self) {
 
         let mut nodes = Vec::new();
+        let mut plot = Vec::new();
 
         let mut ornament = OrnamentData {
             horizontal_margin_height: 40u32,
@@ -136,68 +185,11 @@ impl Ornament for Painting {
         
         // random points
         self.generate_random_nodes(&mut nodes);
+        self.calculate_polynomial(&nodes, &mut plot, &ornament);
         
-        for rp in &nodes {
-            println!("{:?}", rp);
-        }
-
-        // polynome
-        let mut function = Vec::new();
-
-        let mut x = 0f32;
-        let mut sum : f32;
-
-        let x_mult = ((ornament.axis_x_range  as i32) / 9i32) as f32;
-        let y_mult = ((ornament.axis_y_range  as i32) / 5i32) as f32;
-        
-        while x < 9 as f32 {
-        
-            sum = 0f32;
-            
-            for p in &nodes {
-                //println!("{:?}", p);
-                
-                let mut coef = 1f32;
-                
-                for pj in &nodes {
-                    if pj.x != p.x {
-                        coef *= (x - pj.x) / (p.x - pj.x);
-                    }
-                }
-                
-                sum += p.y * coef;
-            }
-
-            let mut proposed_y = ((sum * y_mult) + ornament.axis_y_positive_part as f32 + ornament.horizontal_margin_height as f32) as i32;
-
-            if proposed_y < ornament.horizontal_margin_height as i32 {
-                proposed_y = ornament.horizontal_margin_height as i32;
-            } else
-            if proposed_y > (ornament.horizontal_margin_height + ornament.axis_y_range) as i32 {
-                proposed_y = (ornament.horizontal_margin_height + ornament.axis_y_range) as i32;
-            }
-            
-            function.push(
-                ThePoint{
-                    x: ((x * x_mult) + ornament.vertical_margin_width as f32) as i32, 
-                    y: proposed_y
-                }
-            );
-            
-            x += 0.1f32;
-        }
-        
-        for d in 0..10 {
-            println!("{:?}", &function[d]);
-        }
-        println!("...");
-        for d in function.len() -20..function.len() {
-            println!("{:?}", &function[d]);
-        }
-
         // printing 
         let start_index = 10;
-        let end_index = function.len() -10;
+        let end_index = plot.len() -10;
 
         // print normal ->
         color.r += if high_color_part == 0 {step_high} else {step};
@@ -205,12 +197,12 @@ impl Ornament for Painting {
         color.b += if high_color_part == 2 {step_high} else {step};
 
         println!("n ->");
-        let mut v0 = &function[start_index];
-        let mut v1 = &function[start_index +1];
+        let mut v0 = &plot[start_index];
+        let mut v1 = &plot[start_index +1];
         for i in start_index +2..end_index +1 {
             self.draw_line(&v0, &v1, &color, ornament.line_thickness);
             v0 = v1;
-            v1 = &function[i];
+            v1 = &plot[i];
         }
 
         // print normal <-
@@ -219,17 +211,17 @@ impl Ornament for Painting {
         color.b += if high_color_part == 2 {step_high} else {step};
         
         println!("n <-");
-        println!("{}", &function.len());
+        println!("{}", &plot.len());
 
         let mut i = start_index;
         let mut j = end_index;
 
         while i < end_index && j > 0 {
 
-            let x0 = &function[i].x;
-            let y0 = &function[j].y;
-            let x1 = &function[i+1].x;
-            let y1 = &function[j-1].y;
+            let x0 = &plot[i].x;
+            let y0 = &plot[j].y;
+            let x1 = &plot[i+1].x;
+            let y1 = &plot[j-1].y;
 
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};
@@ -251,10 +243,10 @@ impl Ornament for Painting {
         println!("rev ->");
         let mut i = start_index;
         while i < end_index {
-            let x0 = &function[i].x;
-            let y0 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[i].y.clone();
-            let x1 = &function[i+1].x;
-            let y1 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[i+1].y.clone();
+            let x0 = &plot[i].x;
+            let y0 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &plot[i].y.clone();
+            let x1 = &plot[i+1].x;
+            let y1 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &plot[i+1].y.clone();
 
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};
@@ -270,17 +262,17 @@ impl Ornament for Painting {
         color.b += if high_color_part == 2 {step_high} else {step};
         
         println!("n <-");
-        println!("{}", &function.len());
+        println!("{}", &plot.len());
 
         let mut i = start_index;
         let mut j = end_index;
 
         while i < end_index && j > 0 {
 
-            let x0 = &function[i].x;
-            let y0 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[j].y.clone();
-            let x1 = &function[i+1].x;
-            let y1 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[j-1].y.clone();
+            let x0 = &plot[i].x;
+            let y0 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &plot[j].y.clone();
+            let x1 = &plot[i+1].x;
+            let y1 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &plot[j-1].y.clone();
 
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};
