@@ -6,7 +6,8 @@ pub struct OrnamentData {
     pub horizontal_margin_height: u32,
     pub vertical_margin_width: u32,
     pub axis_x_range: u32,
-    pub axis_y_range: u32
+    pub axis_y_range: u32,
+    pub axis_y_positive_part: u32
 }
 
 pub trait OrnametCalculation {
@@ -16,86 +17,102 @@ pub trait OrnametCalculation {
 impl OrnametCalculation for OrnamentData {
     fn caclulate_axes(&mut self, canvas_width: u32, canvas_height: u32) {
         self.axis_x_range = canvas_width - (2u32 * self.vertical_margin_width);
-        self.axis_y_range = canvas_height - (2u32 * self.horizontal_margin_height);    
+        self.axis_y_range = canvas_height - (2u32 * self.horizontal_margin_height); 
+        self.axis_y_positive_part = self.axis_y_range / 2u32;
     }
 }
 
 //-- Ornament printing
 
 pub trait Ornament {
+    fn raise_color_by_step(&self, color: &mut TheColor, step: u8);
+    fn fall_color_by_step(&self, color: &mut TheColor, step: u8);
+    fn print_background(&mut self, ornament: &OrnamentData);
     fn generate(&mut self);
 }
 
 impl Ornament for Painting {
-    fn generate(&mut self) {
+    fn raise_color_by_step(&self, color: &mut TheColor, step: u8) {
+        color.r += step;
+        color.g += step;
+        color.b += step;
+    }
+    fn fall_color_by_step(&self, color: &mut TheColor, step: u8) {
+        color.r -= step;
+        color.g -= step;
+        color.b -= step;
+    }
 
-        let mut ornament = OrnamentData {
-            horizontal_margin_height: 40u32,
-            vertical_margin_width: 40u32,
-            axis_x_range: 0u32,
-            axis_y_range: 0u32
-        };
-
-        ornament.caclulate_axes(self.width, self.height);
-
-        // canvas preparation
-        
-        
-        let yplus = ornament.axis_y_range / 2;
+    fn print_background(&mut self, ornament: &OrnamentData) {
 
         // bc print
         let bc_step = 3u8;
-        let high_color_part = self.randomizer.spit(3);
+
         let mut color = TheColor{
             r : self.randomizer.spit_range(200, 250) as u8,
             g : self.randomizer.spit_range(200, 250) as u8,
             b : self.randomizer.spit_range(200, 250) as u8
         };
 
-        let bcx = self.randomizer.spit_range(ornament.vertical_margin_width as i32, (self.width - ornament.vertical_margin_width as u32) as i32);
-        let bcy = self.randomizer.spit_range(ornament.horizontal_margin_height as i32, (self.height - ornament.horizontal_margin_height) as i32);
+        let bcx = self.randomizer.spit_range(
+            ornament.vertical_margin_width as i32, 
+            (self.width - ornament.vertical_margin_width) as i32
+        );
+        let bcy = self.randomizer.spit_range(
+            ornament.horizontal_margin_height as i32, 
+            (self.height - ornament.horizontal_margin_height) as i32
+        );
 
         let mut triangle = Triangle{
             p0: ThePoint {x: 0, y: 0 },
             p1: ThePoint {x: self.width as i32, y: 0},
             p2: ThePoint {x: bcx, y: bcy},
-            red: color.r,
-            green: color.g,
-            blue: color.b
         };
-        self.draw_triangle(&triangle);
+        self.draw_triangle(&triangle, &color);
 
         triangle.p0.x = self.width as i32;
         triangle.p0.y = 0;
         triangle.p1.x = self.width as i32;
         triangle.p1.y = self.height as i32;
-        triangle.red -= bc_step;
-        triangle.green -= bc_step;
-        triangle.blue -= bc_step;
-        self.draw_triangle(&triangle);
+        self.fall_color_by_step(&mut color, bc_step);
+        self.draw_triangle(&triangle, &color);
 
         triangle.p0.x = self.width as i32;
         triangle.p0.y = self.height as i32;
         triangle.p1.x = 0;
         triangle.p1.y = self.height as i32;
-        triangle.red -= bc_step;
-        triangle.green -= bc_step;
-        triangle.blue -= bc_step;
-        self.draw_triangle(&triangle);
+        self.fall_color_by_step(&mut color, bc_step);
+        self.draw_triangle(&triangle, &color);
 
         triangle.p0.x = 0;
         triangle.p0.y = self.height as i32;
         triangle.p1.x = 0;
         triangle.p1.y = 0;
-        triangle.red -= bc_step;
-        triangle.green -= bc_step;
-        triangle.blue -= bc_step;
-        self.draw_triangle(&triangle);
+        self.fall_color_by_step(&mut color, bc_step);
+        self.draw_triangle(&triangle, &color);
+    }
 
+    fn generate(&mut self) {
+
+        let mut ornament = OrnamentData {
+            horizontal_margin_height: 40u32,
+            vertical_margin_width: 40u32,
+            axis_x_range: 0u32,
+            axis_y_range: 0u32,
+            axis_y_positive_part: 0u32,
+            //color: TheColor{ r:0, g:0, b:0 }
+        };
+
+        ornament.caclulate_axes(self.width, self.height);
+        self.print_background(&ornament);
+
+        let high_color_part = self.randomizer.spit(3);
         // main print
-        color.r = if high_color_part == 0 {self.randomizer.spit_range(200, 250) as u8} else {self.randomizer.spit(100) as u8};
-        color.g = if high_color_part == 1 {self.randomizer.spit_range(200, 250) as u8} else {self.randomizer.spit(100) as u8};
-        color.b = if high_color_part == 2 {self.randomizer.spit_range(200, 250) as u8} else {self.randomizer.spit(100) as u8};
+        let mut color = TheColor {
+            r : if high_color_part == 0 {self.randomizer.spit_range(200, 250) as u8} else {self.randomizer.spit(100) as u8},
+            g : if high_color_part == 1 {self.randomizer.spit_range(200, 250) as u8} else {self.randomizer.spit(100) as u8},
+            b : if high_color_part == 2 {self.randomizer.spit_range(200, 250) as u8} else {self.randomizer.spit(100) as u8}
+        };
     
         let step = 20u8;
         let step_high = 1u8;
@@ -106,7 +123,7 @@ impl Ornament for Painting {
         let thickness = 8u32;
         
 
-        println!("w{} h{}  vm{} hm{}  x{} y{} +y{}", self.width, self.height, ornament.vertical_margin_width, ornament.horizontal_margin_height, ornament.axis_x_range, ornament.axis_y_range, yplus);
+        println!("w{} h{}  vm{} hm{}  x{} y{} +y{}", self.width, self.height, ornament.vertical_margin_width, ornament.horizontal_margin_height, ornament.axis_x_range, ornament.axis_y_range, ornament.axis_y_positive_part);
         
         // random points
         let mut random_points_counter = 0u8;
@@ -171,7 +188,7 @@ impl Ornament for Painting {
                 sum += p.y * coef;
             }
 
-            let mut proposed_y = ((sum * y_mult) + yplus as f32 + ornament.horizontal_margin_height as f32) as i32;
+            let mut proposed_y = ((sum * y_mult) + ornament.axis_y_positive_part as f32 + ornament.horizontal_margin_height as f32) as i32;
 
             if proposed_y < ornament.horizontal_margin_height as i32 {
                 proposed_y = ornament.horizontal_margin_height as i32;
@@ -255,9 +272,9 @@ impl Ornament for Painting {
         let mut i = start_index;
         while i < end_index {
             let x0 = &function[i].x;
-            let y0 = (2 * (yplus + ornament.horizontal_margin_height)) as i32 - &function[i].y.clone();
+            let y0 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[i].y.clone();
             let x1 = &function[i+1].x;
-            let y1 = (2 * (yplus + ornament.horizontal_margin_height)) as i32 - &function[i+1].y.clone();
+            let y1 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[i+1].y.clone();
 
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};
@@ -281,9 +298,9 @@ impl Ornament for Painting {
         while i < end_index && j > 0 {
 
             let x0 = &function[i].x;
-            let y0 = (2 * (yplus + ornament.horizontal_margin_height)) as i32 - &function[j].y.clone();
+            let y0 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[j].y.clone();
             let x1 = &function[i+1].x;
-            let y1 = (2 * (yplus + ornament.horizontal_margin_height)) as i32 - &function[j-1].y.clone();
+            let y1 = (2 * (ornament.axis_y_positive_part + ornament.horizontal_margin_height)) as i32 - &function[j-1].y.clone();
 
             let v0 = ThePoint{ x: x0.clone(), y: y0.clone()};
             let v1 = ThePoint{ x: x1.clone(), y: y1.clone()};

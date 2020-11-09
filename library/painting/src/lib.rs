@@ -56,10 +56,7 @@ pub struct Trapezoid {
 pub struct Triangle {
     pub p0: ThePoint,
     pub p1: ThePoint,
-    pub p2: ThePoint,
-    pub red: u8,
-    pub green: u8,
-    pub blue: u8
+    pub p2: ThePoint
 }
 
 pub struct TheColor {
@@ -81,7 +78,7 @@ pub trait Painter {
     fn draw_point(&mut self, point: &ThePoint, color: Rgb<u8>);
     fn draw_simple_line(&mut self, start: &ThePoint, end: &ThePoint, color: &TheColor);
     fn draw_line(&mut self, start: &ThePoint, end: &ThePoint, color: &TheColor, thickness: u32);
-    fn draw_triangle(&mut self, triangle: &Triangle);
+    fn draw_triangle(&mut self, triangle: &Triangle, color: &TheColor);
 }
 
 impl Painter for Painting {
@@ -238,7 +235,7 @@ impl Painter for Painting {
         );
     }
 
-    fn draw_triangle(&mut self, triangle: &Triangle) {
+    fn draw_triangle(&mut self, triangle: &Triangle, color: &TheColor) {
         draw_convex_polygon_mut(
             &mut self.canvas,
             &[
@@ -247,9 +244,9 @@ impl Painter for Painting {
                 Point::new(triangle.p2.x, triangle.p2.y),
             ],
             Rgb([
-                triangle.red, 
-                triangle.green, 
-                triangle.blue
+                color.r, 
+                color.g, 
+                color.b
             ])
         );
     }
