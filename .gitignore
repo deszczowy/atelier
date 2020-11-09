@@ -12,6 +12,7 @@ library/sql/target/
 
 art/circles/target/
 art/stripes/target/
+art/ornament/target/
 
 player/target/
 player/*.db
