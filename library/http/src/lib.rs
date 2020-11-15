@@ -13,10 +13,10 @@ pub fn get(url: String) -> String {
     let mut easy = Easy2::new(Collector(Vec::new()));
     
     easy.get(true).unwrap();
-    easy.url("https://wszedziepudla.pl").unwrap();
+    easy.url(url.as_str()).unwrap();
     easy.perform().unwrap();
 
-    if (easy.response_code().unwrap() == 200) {
+    if easy.response_code().unwrap() == 200 {
         let contents = easy.get_ref();
         String::from_utf8_lossy(&contents.0).to_string()
     } else {
