@@ -85,7 +85,7 @@ impl OrnametCalculation for OrnamentData {
                 proposed_y = self.horizontal_margin_height;
             } else
             if proposed_y > (self.horizontal_margin_height + self.axis_y_range) {
-                proposed_y = (self.horizontal_margin_height + self.axis_y_range);
+                proposed_y = self.horizontal_margin_height + self.axis_y_range;
             }
             
             self.plot.push(
@@ -107,7 +107,7 @@ pub trait Ornament {
     fn print_background(&mut self, ornament: &OrnamentData);
     fn print_background_triangles(&mut self, list: &mut Vec<i32>, triangle: &mut Triangle, color: &mut TheColor);
     fn generate_random_nodes(&mut self, points: &mut Vec<ThePointF>);
-    fn print_plot_normal(&mut self, plot: &Vec<ThePoint>, ornament: &OrnamentData);
+    //fn print_plot_normal(&mut self, plot: &Vec<ThePoint>, ornament: &OrnamentData);
     fn generate(&mut self);
 }
 
@@ -183,9 +183,8 @@ impl Ornament for Painting {
         points.push(ThePointF{x: 9.0, y:0.0}); // last node also at zero
     }
 
-    fn print_plot_normal(&mut self, plot: &Vec<ThePoint>, ornament: &OrnamentData) {
-
-    }
+    //fn print_plot_normal(&mut self, plot: &Vec<ThePoint>, ornament: &OrnamentData) {
+    //}
 
     fn generate(&mut self) {
 
