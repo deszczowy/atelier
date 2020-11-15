@@ -42,9 +42,9 @@ impl Stripes for Painting {
 
         // colors initialization
         let color_part_top = self.randomizer.spit_range(40, 100) as i32;
-        let mut c_red = 0 as u8;
-        let mut c_green = 0 as u8;
-        let mut c_blue = 0 as u8;
+        let mut c_red: u8;
+        let mut c_green: u8;
+        let mut c_blue: u8;
 
         // direction of color progression. 
         // up - from dark to light
@@ -66,9 +66,9 @@ impl Stripes for Painting {
 
         println!("Base color - RGB({}, {}, {})", c_red, c_green, c_blue);
 
-        let mut c_red_step = self.randomizer.spit(5) as u8;
-        let mut c_green_step = self.randomizer.spit(5) as u8;
-        let mut c_blue_step = self.randomizer.spit(5) as u8;
+        let c_red_step = self.randomizer.spit(5) as u8;
+        let c_green_step = self.randomizer.spit(5) as u8;
+        let c_blue_step = self.randomizer.spit(5) as u8;
 
         self.fill_canvas(c_red, c_green, c_blue);
 
@@ -117,15 +117,15 @@ impl Stripes for Painting {
                 self.fill_crossed(&mut pack, shift_top, shift_bottom, d_top, d_bottom);
             }
 
-            let mut p_0 = painting::ThePoint{ x: pack.x0, y: 0 }; // top border
-            let mut p_1 = painting::ThePoint{ x: pack.x1, y: 0 };
-            let mut p_2 = painting::ThePoint{ x: pack.x2, y: self.height as i32}; // bottom border
-            let mut p_3 = painting::ThePoint{ x: pack.x3, y: self.height as i32};
+            let p_0 = painting::ThePoint{ x: pack.x0, y: 0 }; // top border
+            let p_1 = painting::ThePoint{ x: pack.x1, y: 0 };
+            let p_2 = painting::ThePoint{ x: pack.x2, y: self.height as i32}; // bottom border
+            let p_3 = painting::ThePoint{ x: pack.x3, y: self.height as i32};
 
             going_up = !going_up;
             counter -= 1;
 
-            let mut stripe = painting::Trapezoid{
+            let stripe = painting::Trapezoid{
                 p0: p_0,
                 p1: p_1,
                 p2: p_2,
