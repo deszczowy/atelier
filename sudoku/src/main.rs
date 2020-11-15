@@ -4,10 +4,10 @@ use sudoku::{Board, IsSudokuBoard, Printer, Printing};
 use concierge::*;
 use tuner::*;
 use common::log::*;
-use common::serialized::Serialized;
 use common::poke_message::*;
 use common::arguments::*;
 
+const SUDOKU_NAME : &str = "sudoku";
 
 fn run(message: String, one_shot: bool) {
     println!("SUDOKU");
@@ -30,7 +30,7 @@ fn run(message: String, one_shot: bool) {
             board.lets_go();
         }
 
-        println!("Done in {} attempts!", at);
+        write_log(format!("Done in {} attempts!", at), SUDOKU_NAME);
 
         board.mask_board();
 
@@ -53,6 +53,6 @@ fn main() {
         run(message, true);
     } else {
         let concierge = Concierge::new();
-        concierge.expect("sudoku".to_string(), &run);
+        concierge.expect("sudoku".to_string(), &run).expect("Concierge cannot retrieve sudoku table.");
     }
 }
