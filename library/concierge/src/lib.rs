@@ -93,7 +93,10 @@ impl Serve for Concierge {
         write_log(format!("Leaving message with id {} in {:?}", message_id, path), LIB_NAME);
 
         let mut message_instance = File::create(path.as_path())?;
-        message_instance.write_all(message.as_bytes());
+        match message_instance.write_all(message.as_bytes()) {
+            Ok(_) => { write_log("Message sent".to_string(), LIB_NAME); }
+            Err(e) => { write_log(e.to_string(), LIB_NAME); }
+        }
         Ok(())
     }
 }
