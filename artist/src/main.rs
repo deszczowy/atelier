@@ -3,9 +3,10 @@ use painting::*;
 use concierge::*;
 use tuner::*;
 use common::log::*;
-use common::serialized::Serialized;
 use common::poke_message::*;
 use common::arguments::*;
+
+const ARTIST_NAME : &str = "artist";
 
 fn run(message: String, one_shot: bool) {
     
@@ -13,18 +14,20 @@ fn run(message: String, one_shot: bool) {
     let height = 700 as u32;
     let frame = 5 as i32;
     
-    println!("ARTIST!");
+    write_log("ARTIST!".to_string(), ARTIST_NAME);
 
     let p : Poke = match serde_json::from_str(&message) {
         Ok(data) => data,
         Err(error) => panic!("Unable to read message: {:?}", error),
     };
 
-    let target = "./".to_string();
+    let mut target = "./".to_string();
     if !one_shot {
         let cfg = Config::new("../config/artist.config".to_string()).unwrap();
-        let target = cfg["target"].as_str().unwrap().to_string();
+        target = cfg["target"].as_str().unwrap().to_string();
     }
+
+    write_log(format!("Running {}", p.action), ARTIST_NAME);
 
     if p.action == "CIRCLES" {
         use circles::*;
@@ -57,6 +60,8 @@ fn run(message: String, one_shot: bool) {
 
     if one_shot {
         println!("One shot done!");
+    } else {
+        write_log("Done!".to_string(), ARTIST_NAME);
     }
 
 }
@@ -68,6 +73,8 @@ fn main() {
         run(message, true);
     } else {
         let concierge = Concierge::new();
-        concierge.expect("art".to_string(), &run);
+        concierge
+            .expect("art".to_string(), &run)
+            .expect("Concierge cannot fulfill any artist requests."); // this is from error handling
     }
 }
