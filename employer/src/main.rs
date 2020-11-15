@@ -26,7 +26,7 @@ fn send_order(employee: String, order: String) {
     write_log(format!("Sending order to {}", employee), LIB_NAME);
     let concierge = Concierge::new();
     let msg = Poke::new(order).serialized();
-    concierge.leave_message(employee, msg);
+    concierge.leave_message(employee, msg).expect("Concierge was not able to leave message.");
 }
 
 // this is for asking status. Not used right now, but will be.
@@ -35,7 +35,7 @@ fn ask(employee: String) {
     write_log(format!("Sending status request to {}", employee), LIB_NAME);
     let concierge = Concierge::new();
     let msg = Poke::new("STATUS".to_string()).serialized();
-    concierge.leave_message(employee, msg);
+    concierge.leave_message(employee, msg).expect("Concierge was not able to leave message.");
 }
 
 fn run() {
