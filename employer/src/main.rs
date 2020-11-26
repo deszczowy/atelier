@@ -65,7 +65,7 @@ fn run() {
                 Job::new(
                     job.execution_pattern.parse().unwrap(), ||
                     {
-                        send_order("artist".to_string(), "CIRCLES".to_string());
+                        send_order("art".to_string(), "CIRCLES".to_string());
                     }
                 )
             );
@@ -77,7 +77,7 @@ fn run() {
                 Job::new(
                     job.execution_pattern.parse().unwrap(), ||
                     {
-                        send_order("artist".to_string(), "STRIPES".to_string());
+                        send_order("art".to_string(), "STRIPES".to_string());
                     }
                 )
             );
